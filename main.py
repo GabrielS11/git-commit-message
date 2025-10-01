@@ -16,3 +16,7 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
+@app.get("/number")
+async def say_number():
+    return {"number": 123456789}
+
