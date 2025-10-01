@@ -2,19 +2,20 @@ from git import Repo
 
 
 def main():
+    '''Esta funçao vai criar a mensagem para o seu commit'''''
     repo = Repo(".")
-    print(repo.git_dir)
 
-    print("\n\n\n")
+    # pega as mudanças não commitadas (staged + unstaged)
+    diff_text = repo.git.diff()
 
+    # (no futuro aqui entra o LLM que gera a mensagem)
+    mensagem = "fix: commit automático de teste"
 
-    last_commit = repo.head.commit
+    # faz o commit com tudo
+    repo.git.add(A=True)
+    repo.index.commit(mensagem)
 
-    print("Ultimo commit hash: ", last_commit.hexsha)
-    print("Autor: ", last_commit.author)
-    print("Mensagem: ", last_commit.message)
-    print("Data: ", last_commit.committed_datetime)
-
+    print("Commit feito com mensagem:", mensagem)
 
 if __name__ == "__main__":
     main()
