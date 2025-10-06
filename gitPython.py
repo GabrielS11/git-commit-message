@@ -1,21 +1,32 @@
-from git import Repo
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
-def main():
-    '''Esta funçao vai criar a mensagem para o seu commit'''
-    repo = Repo(".")
+def generate_commit_message(diff_text):
+    """Generate a commit message using OpenAI API."""
+    
 
-    # pega as mudanças não commitadas (staged + unstaged)
-    diff_text = repo.git.diff()
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY não está definida. Verifica o teu .env")
 
-    # (no futuro aqui entra o LLM que gera a mensagem)
-    mensagem = ("Testing auto commit")
+    api_key = api_key.strip()
+    
+    client = OpenAI(api_key=api_key)
 
-    # faz o commit com tudo
-    repo.git.add(A=True)
-    repo.index.commit(mensagem)
+    prompt = (
+        "Generate a concise and descriptive git commit message for the following code changes:\n\n"
+        f"{diff_text}\n\nCommit message:"
+    )
 
-    print("Commit feito com mensagem:", mensagem)
+    response = client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
 
-if __name__ == "__main__":
-    main()
+    return response.choices[0].message["content"].strip()
